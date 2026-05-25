@@ -1,14 +1,184 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>האתר הראשון שלי</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TradeHub Journal</title>
+  <meta name="description" content="יומן עסקאות והשקעות סטטי ל-GitHub Pages עם חדשות כלכליות, Intraday, Swing והשקעות לטווח ארוך." />
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <h1>שלום, זה האתר שלי</h1>
-  <p>האתר רץ דרך GitHub Pages.</p>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="ניווט ראשי">
+      <div class="brand">
+        <div class="brand-mark">TH</div>
+        <div>
+          <h1>TradeHub</h1>
+          <p>יומן מסחר והשקעות</p>
+        </div>
+      </div>
 
-  <script src="script.js"></script>
+      <nav class="nav-list">
+        <button class="nav-item active" data-view="home"><span>●</span> דף ראשי וחדשות</button>
+        <button class="nav-item" data-view="intraday"><span>◈</span> טרייד תוך יומי</button>
+        <button class="nav-item" data-view="swing"><span>◆</span> עסקאות סווינג</button>
+        <button class="nav-item" data-view="longterm"><span>⬟</span> השקעות לטווח ארוך</button>
+        <button class="nav-item" data-view="analytics"><span>✦</span> סטטיסטיקה</button>
+      </nav>
+
+      <div class="side-note">
+        <strong>שמירה:</strong>
+        <p>הנתונים נשמרים בדפדפן. אפשר לייצא ולייבא קבצי JSON לכל קטגוריה.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">מערכת סטטית ל־GitHub Pages</p>
+          <h2 id="pageTitle">דף ראשי וחדשות כלכליות</h2>
+        </div>
+        <div class="topbar-actions">
+          <button id="themeToggle" class="ghost-btn" type="button">מצב צבע</button>
+          <button id="backupAll" class="primary-btn" type="button">ייצוא כל המערכת</button>
+        </div>
+      </header>
+
+      <section id="homeView" class="view active-view">
+        <div class="hero-grid">
+          <article class="hero-card">
+            <div class="spark"></div>
+            <p class="eyebrow">Market Radar</p>
+            <h3>חדשות כלכליות ממקורות מרכזיים</h3>
+            <p>המערכת מנסה למשוך RSS בזמן אמת. אם מקור חוסם טעינה ישירה, יוצג כרטיס מקור לפתיחה ידנית.</p>
+            <div class="hero-actions">
+              <button id="refreshNews" class="primary-btn" type="button">רענן חדשות</button>
+              <button class="ghost-btn" data-view-jump="analytics" type="button">צפה בסטטיסטיקה</button>
+            </div>
+          </article>
+          <article class="metric-card soft-glow">
+            <span>עסקאות פתוחות</span>
+            <strong id="openTradesCount">0</strong>
+            <small>Intraday + Swing + Long Term</small>
+          </article>
+          <article class="metric-card">
+            <span>R ממוצע</span>
+            <strong id="avgRHome">0.00R</strong>
+            <small>רק עסקאות סגורות</small>
+          </article>
+        </div>
+
+        <div class="toolbar-row">
+          <div class="search-box">
+            <input id="newsSearch" type="search" placeholder="חיפוש חדשות: gold, fed, inflation, stocks..." />
+          </div>
+          <select id="newsSourceFilter" aria-label="סינון מקור חדשות">
+            <option value="all">כל המקורות</option>
+          </select>
+        </div>
+
+        <div id="newsStatus" class="status-line">טוען חדשות...</div>
+        <div id="newsGrid" class="news-grid"></div>
+      </section>
+
+      <section id="journalView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" id="journalEyebrow">Journal</p>
+            <h3 id="journalTitle">יומן עסקאות</h3>
+          </div>
+          <div class="section-actions">
+            <button id="addRecordBtn" class="primary-btn" type="button">הוסף רשומה</button>
+            <button id="importBtn" class="ghost-btn" type="button">ייבוא JSON</button>
+            <button id="exportBtn" class="ghost-btn" type="button">ייצוא JSON</button>
+            <input id="importFile" type="file" accept="application/json" hidden />
+          </div>
+        </div>
+
+        <div class="filters-panel">
+          <input id="tableSearch" type="search" placeholder="חיפוש לפי סימבול / אסטרטגיה / הערות" />
+          <select id="statusFilter">
+            <option value="all">כל הסטטוסים</option>
+            <option value="open">פתוח</option>
+            <option value="closed">סגור</option>
+            <option value="planned">מתוכנן</option>
+            <option value="watchlist">מעקב</option>
+          </select>
+          <select id="directionFilter">
+            <option value="all">כל הכיוונים</option>
+            <option value="Long">Long</option>
+            <option value="Short">Short</option>
+            <option value="Investment">Investment</option>
+          </select>
+        </div>
+
+        <div id="journalStats" class="stats-row"></div>
+        <div class="table-wrap">
+          <table id="recordsTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="analyticsView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Performance Review</p>
+            <h3>סטטיסטיקה ובקרה</h3>
+          </div>
+          <button id="recalcAnalytics" class="ghost-btn" type="button">רענן חישוב</button>
+        </div>
+        <div id="analyticsCards" class="stats-grid"></div>
+        <div class="analysis-layout">
+          <article class="panel-card">
+            <h4>פירוק לפי קטגוריה</h4>
+            <div id="categoryBreakdown" class="mini-bars"></div>
+          </article>
+          <article class="panel-card">
+            <h4>צ׳קליסט ביקורת שבועית</h4>
+            <ul class="checklist">
+              <li>האם העסקאות הטובות הגיעו מאותו Setup?</li>
+              <li>האם יש שעות או Sessions שבהן הביצוע חלש?</li>
+              <li>האם יחס R:R בפועל תואם לתכנון?</li>
+              <li>האם טעויות חוזרות מופיעות לפני הפסדים?</li>
+              <li>האם התמונות תואמות למה שתוכנן לפני הכניסה?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="recordDialog" class="modal">
+    <form id="recordForm" method="dialog" class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow" id="formModeLabel">רשומה חדשה</p>
+          <h3 id="formTitle">הוסף עסקה</h3>
+        </div>
+        <button class="icon-btn" value="cancel" type="button" id="closeRecordDialog">×</button>
+      </div>
+      <div id="formFields" class="form-grid"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" value="cancel" type="button" id="cancelRecord">ביטול</button>
+        <button class="primary-btn" value="default" type="submit">שמור</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="imageDialog" class="modal image-modal">
+    <div class="image-modal-card">
+      <div class="modal-head">
+        <h3 id="imageTitle">תמונה</h3>
+        <button class="icon-btn" type="button" id="closeImageDialog">×</button>
+      </div>
+      <img id="previewImage" alt="תמונת גרף או עסקה" />
+      <a id="imageOpenLink" class="ghost-btn" href="#" target="_blank" rel="noopener">פתח בחלון חדש</a>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/js/app.js" defer></script>
 </body>
 </html>
